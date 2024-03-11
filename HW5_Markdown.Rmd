@@ -1,0 +1,124 @@
+---
+title: "HW5_Markdown"
+output: pdf_document
+date: "2024-02-29"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+# Manay Divatia
+# md46245
+# 1
+Figure 4 is showing how individual income relates to voting in the US. Figure 4
+shows an example of Simpson's Paradox. Each individual line is one of
+the three states of Mississippi, Ohio, and Connecticut. Each open circle is
+the point on the line where individual income is a whole number from -2 to 2.First looking at the open circles, we see a positive relationship. This means that
+we see that as income increases, a person is more likely to vote republican. 
+On the other hand, if we focus on the dark circles we see a different trend.
+The dark circles are the average incomes in those 3 states. We actually see a
+negative relationship which, in context, means that as individual income
+increases, the probability of voting republican decreases. This contrasts from
+the trend we saw with the open circles. Ultimately, we see that when we
+generalize (the dark circles) we see one trend, but after subsetting the data, 
+we see the opposite trend which is what Simpson's paradox is.
+My hypothesis for this question is that as individual income, the probability
+of voting republican increases. I think to test this, I would look at income
+data for all 50 states and see if the general trend matches that of these 3
+states. Based on that, I can either prove or disprove my hypothesis.
+
+# 2
+
+#a
+```{r a, results="hide"}
+load("~/Downloads/fraud.RData")
+P <- sum(russia2011$votes) / sum(russia2011$turnout)
+russia2011$rate<- russia2011$votes / russia2011$turnout
+tail(names(sort(table(russia2011$rate))), 10)
+table(russia2011$rate)
+barplot(table(russia2011$rate), name = "barplot")
+```
+The points around 1/2 and 2/3 are low but for those exact fractions, the instances skyrocket.
+#b
+```{r b}
+NMC = 100
+k_grid = seq(0, 100, by=1)
+dbinom(k_grid, NMC, sum(russia2011$turnout) / sum(russia2011$N))
+barplot(dbinom(k_grid, NMC, P), names.arg = k_grid,
+        xlab='Number of no shows',
+        ylab='Probability')
+```
+After plotting, we see that the distribution should be a lot more. This
+does suggest the idea of voter fraud. However, this itself isn't enough
+evidence to make that claim.
+#c
+```{r c}
+c_plots <- function(P) {
+  barplot(dbinom(k_grid, NMC, P), names.arg = k_grid,
+          xlab='Number of no shows',
+          ylab='Probability')
+}
+c_plots(0.5)
+c_plots(1/3)
+c_plots(3/5)
+c_plots(2/3)
+```
+After plotting, we see how the graphs should be when distributed with the
+different commonly occuring fractions of 1/2, 1/3, 3/5, and 2/3. Again, the
+distribution does suggest election fraud.
+#d
+```{r d}
+d_plots <- function(P) {
+barplot(table(russia2011$rate) - dbinom(k_grid, NMC, P), names.arg = k_grid,
+        xlab='Number of no shows',
+        ylab='Probability')
+}
+#d_plots(0.5)
+#d_plots(1/3)
+#d_plots(3/5)
+#d_plots(2/3)
+```
+The difference we see here shows that proportion do lie in the <2.5 range and
+the 97.5> range. This leads to the greater evidence and supports the claim
+of election fraud in Russia.
+#e
+```{r e}
+barplot(table(canada2011$votes / canada2011$turnout), name = "barplot")
+barplot(table(russia2003$votes / russia2003$turnout), name = "barplot")
+```
+What is surprising is that we can see a similar outcome in Canada and Russia. 
+Both show points where fractions like 1/2, 1/3 and 1 all appear more often than
+others. Moreover, they appear significantly more often which gives us evidence
+that there may have been election fraud during these elections.
+
+# 3
+```{r 3}
+n <- 100
+Z <- rnorm(n)
+X <- Z + rnorm(n) 
+Y <- 2*X + 3*Z + rnorm(n)
+data <- data.frame(X, Z, Y)
+pairs(data)
+cor(data)
+
+n <- 100
+X1 <- rnorm(n)
+X2 <- 0.8*X1 + rnorm(n, mean = 0, sd = 0.5)
+Y <- 2*X1 + 3*X2 + rnorm(n, mean = 0, sd = 1)
+confounded_data <- data.frame(X1, X2, Y)
+pairs(confounded_data)
+cor(confounded_data)
+
+n <- 100
+X1 <- rnorm(n)
+X2 <- 0.8*X1 + rnorm(n, mean = 0, sd = 0.5)
+Y <- 2*X1 + 3*X2 + rnorm(n, mean = 0, sd = 1)
+confounded_data <- data.frame(X1, X2, Y)
+pairs(confounded_data)
+cor(confounded_data)
+```
+Here are 3 examples of how random variables can display a confounded
+relationship. What I did for these is that I created random variables but each
+variable relied on the previous one in some way. Because they relied on the
+previous one(s) it created a confounding relationship that made both related
+and taht could be seen through the graphs.

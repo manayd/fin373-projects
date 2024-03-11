@@ -1,0 +1,182 @@
+---
+title: "HW3_Markdown"
+output: pdf_document
+date: "2024-02-14"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+# Manay Divatia
+# md46245
+# 2/14/24
+
+# Problem 1
+
+## a
+```{r a}
+gay_df = read.csv("~/Downloads/gay.csv")
+wave1_df = subset(gay_df, subset = wave == 1)
+summary(wave1_df)
+no_contact_1 = subset(wave1_df, subset = (treatment == "No Contact"))
+dim(no_contact_1)
+marriage_gay_1 = subset(wave1_df, subset = (treatment == "Same-Sex Marriage 
+                                            Script by Gay Canvasser"))
+dim(marriage_gay_1)
+marriage_straight_1 = subset(wave1_df, subset = (treatment == "Same-Sex Marriage
+                                                 Script by Straight Canvasser"))
+dim(marriage_straight_1)
+```
+We see a lot more instances of no contact than with any other treatment which 
+may suggest that it wasn't random after all. Another thing to note is that the 
+treatment of Same-Sex Marriage Script by Gay Canvasser seemed to be almost 
+double of the other treatments aside from the No Contact treatment. 
+This also may indicate that the study was not random.
+## b
+```{r b}
+mean(subset(gay_df, subset=(wave == 2 & study == 1 & treatment == "Same-Sex 
+                            Marriage Script by Gay Canvasser"))$ssm)
+mean(subset(gay_df, subset=(wave == 2 & study == 1 & treatment == "Same-Sex 
+                            Marriage Script by Straight Canvasser"))$ssm)
+```
+From this, we can see that the average support for study 1 where there were gay
+canvassers was 3.13 and for that of straight canvassers it was 3.16. This is not
+really a large difference to indicate anything with full certainty.
+## c
+```{r c}
+mean(subset(gay_df, subset=(wave == 2 & study == 1 & treatment == "Same-Sex 
+                            Marriage Script by Gay Canvasser"))$ssm)
+mean(subset(gay_df, subset=(wave == 2 & study == 1 & treatment == "Recycling 
+                            Script by Gay Canvasser"))$ssm)
+mean(subset(gay_df, subset=(wave == 2 & study == 1 & treatment == "Same-Sex 
+                            Marriage Script by Straight Canvasser"))$ssm)
+mean(subset(gay_df, subset=(wave == 2 & study == 1 & treatment == "Recycling 
+                            Script by Straight Canvasser"))$ssm)
+```
+I think the purpose of having authors use a script to encourage people to recycle
+helped to show some inherent biases people may have even when hearing about
+nothing related to same sex marriage. When comaparing the results of the gay 
+canvassers for the same-sex marriage and recycling scripts, we found that the
+same-sex marriage script had a 3.13 support while the recycling had 3.1 
+which isn't enough of a difference to make any claims. When comaparing the 
+results of the straight canvassers for the same-sex marriage and recycling 
+scripts, we found that the same-sex marriage script had a 3.16 support while 
+the recycling had 3 which is slightly larger and may be indicative of some trend.
+## d
+```{r d}
+mean(subset(gay_df, subset=(wave == 7 & study == 1 & treatment == "Same-Sex 
+                            Marriage Script by Gay Canvasser"))$ssm)
+mean(subset(gay_df, subset=(wave == 7 & study == 1 & treatment == "Same-Sex 
+                            Marriage Script by Straight Canvasser"))$ssm)
+```
+It seems that there could be some lasting effects. After computing the mean, 
+we find that with the gay canvasser, the average was 3.37 while with the straight
+canvasser, it was 3.27. This difference is about .1 which is something that
+could or couldn't be attributed to the canvassers.
+## e
+```{r e}
+no_contact_2 = subset(gay_df, subset = (wave == 1 & study == 2 & treatment == 
+                                          "No Contact"))
+dim(no_contact_2)
+marriage_gay_2 = subset(gay_df, subset = (wave == 1 & study == 2 & 
+                                            treatment == "Same-Sex Marriage 
+                                          Script by Gay Canvasser"))
+dim(marriage_gay_2)
+```
+It does seem that there is some randomization because the subsets seems to be
+around the same size. Probably what is more important is that there isn't a 
+drastic difference.
+## f
+```{r f}
+mean(subset(gay_df, subset=(wave == 2 & study == 2 & treatment == "Same-Sex 
+                            Marriage Script by Gay Canvasser"))$ssm)
+```
+Yes it looks to be consistent to some extent. The data showed in the first study
+a ssm of 3.13 while in the second study, a ssm of 3.11. If they were properly
+randomized, they wouldn't be too different in score.
+## g
+```{r g}
+mean(subset(gay_df, subset=(wave == 1 & study == 2 & treatment == "Same-Sex 
+                            Marriage Script by Gay Canvasser"))$ssm)
+mean(subset(gay_df, subset=(wave == 2 & study == 2 & treatment == "Same-Sex 
+                            Marriage Script by Gay Canvasser"))$ssm)
+mean(subset(gay_df, subset=(wave == 3 & study == 2 & treatment == "Same-Sex 
+                            Marriage Script by Gay Canvasser"))$ssm)
+mean(subset(gay_df, subset=(wave == 4 & study == 2 & treatment == "Same-Sex 
+                            Marriage Script by Gay Canvasser"))$ssm)
+mean(subset(gay_df, subset=(wave == 7 & study == 2 & treatment == "Same-Sex 
+                            Marriage Script by Gay Canvasser"))$ssm)
+```
+The first wave is the lowest with a score of 2.97. The next 3 waves hover 
+around 3.1 +- .1. The final wave jumps up to 3.33. Ultimately, it looks like
+the score increases throughout the waves in study 2. However, without the 5th 
+or 6th wave, we can't know the full story.
+
+# Problem 2
+
+## a
+```{r a2}
+leaders = read.csv("~/Downloads/leaders.csv")
+summary(leaders)
+dim(leaders)
+unique(leaders$country)
+(2001 - 1878) / nrow(leaders)
+```
+We can see from the dim() method that there are 250 assassination attempts. 
+From unique(), we know that there are 88 countries that have experience at least
+one leader assassination attempt. From the summary function, we found that this
+data ranged from 1878 to 2001. Finding mean assassinations per year, we get .492
+which could be representated as about 1 assassination attempt every 2 years.
+## b
+```{r b2}
+leaders$dead <- ifelse(leaders$result == "dies within a day after the attack" | 
+                         leaders$result == "dies between a day and a week" | 
+                         leaders$result == "dies between a week and a month" | 
+                         leaders$result == "dies, timing unknown", 1, 0)
+
+```
+It does speak to the validity of the assumption that attempts are randomly
+determined because there seems to be a distribution of ways and counts in which
+a leader dies or doesn't die.
+## c
+```{r c2}
+mean(leaders$politybefore)
+mean(leaders$polityafter)
+mean(leaders$age[leaders$dead == 0])
+mean(leaders$age[leaders$dead == 1])
+```
+The polity before is -1.51 and after is -1.65. This shows a movement towards
+hereditary monarchy as defined by the Polity Project. As for age, the average
+age for leaders who survived was 52.7 while the average age for leaders who died
+was 56.5 which means that older leaders were maybe more likely to die.
+## d
+```{r d2}
+mean(leaders$interwarbefore)
+mean(leaders$interwarafter)
+mean(leaders$civilwarbefore)
+mean(leaders$civilwarafter)
+leaders$warbefore <- ifelse(leaders$civilwarbefore == 1 | 
+                              leaders$interwarbefore == 1, 1, 0)
+mean(leaders$warbefore)
+```
+In terms of international and civil war, both dropped in percentage from before
+to after. For international, it went from .188 to .148 and for civil war, 
+it went from .216 to .184. After creating the warbefore column and looking
+at the mean, we find that 36.8% of assassinations had a civil or international 
+war happen within 3 years prior to the assassination attempt.
+
+## e
+```{r e2}
+leader_dead_df = subset(leaders, subset=(dead == 1))
+mean(leader_dead_df$polityafter - leader_dead_df$politybefore)
+leaders$warafter <- ifelse(leaders$civilwarafter == 1 | 
+                              leaders$interwarafter == 1, 1, 0)
+mean(leaders$warafter[leaders$dead == 1] - leaders$warbefore[leaders$dead == 1])
+```
+From my findings, it looks like a successful leader assassination actually leads
+to more hereditary monarchy. This is because the average difference is -0.5.
+Since the figure is negative, it means that after assassinations, countries
+tend ot move towards monarchies. From my findings, it looks like that war 
+decreases after a successful assasination. This is because my findings show that
+war after is lower than war before which means that war went down. Specifically,
+the mean was -.148 or -14.8%.

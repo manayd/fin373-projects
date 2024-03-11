@@ -1,0 +1,47 @@
+---
+title: "Homework 1 - Manay Divatia"
+output: pdf_document
+date: "2024-02-01"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+##a
+```{r a}
+cars_df = read.csv("~/Downloads/cars.csv")
+```
+This dataset contains information about cars. It has whether the car is a sports, suv, wagon, minivan, or pickup car. It also has information on whether it is all wheel drive or rear wheel drive. It also has information on the dealer, engine and other characteristics of the car. It has this information for a variety of cars of different brands.
+##b
+```{r b}
+dim(cars_df)
+```
+The car has 387 observations (or rows) and 18 variables (or columns).
+##c
+```{r c}
+summary(cars_df)
+```
+From the summary, it looks like all types of cars are there except for the pickup. I know this based on the ranges as it looks like the observation is indicated by a 1 or 0 in the variable of which it is. So for example, a car that is an SUV only would have a 1 in that column and 0s in all other columns for that observation. Additionally, AWD and RWD also have the same 0 or 1 system. There are no null values in the dataset. The horsepower ranges from 73 to 493 and cylinders range from 3 to 12. The weight ranges from 1850 to 6400 and engine from 1.4 to 6. It also looks like the dataframe has information about the miles per gallon which for the city, range from 10 to 60 and for the highway, range from 12 to 66. The weight ranges from 1850 to 6400, wheelbase from 89 to 130, length from 143 to 221, and width from 64 to 81. The retail variable ranges from 10280 to 192465 and dealer from 9875 to 173560 but I think these numbers shouldn't be looked at mathematically because I believe they are more so unique numbers for maybe which dealership the car was bought at. 
+##d
+```{r d}
+sum(cars_df$Minivan) / nrow(cars_df)
+```
+The proportion of cars that were minivans was around 5.4%. I did this by getting the amount of minivans and dividing by the total number of cars which was also the total number of observations.
+##e
+```{r e}
+sum(cars_df$AWD)
+```
+78 cars had all wheel drive. I calculated this by summing up the AWD column because a 1 meant that it was all wheel drive so I could just add up all those.
+##f
+```{r f}
+mean(cars_df$Horsepower)
+```
+The average horsepower is 214.44. I calculated this using the mean function on the Horsepower column.
+##g
+```{r g}
+cars_df$AWDPickup <- ifelse(cars_df$AWD == 1 & cars_df$Pickup == 1, 1, 0)
+sum(cars_df$AWDPickup)
+```
+There were no cars that were all wheel drive pickups. I did this by using the ifelse function which has the boolean, and 2 outputs as the parameters. I then saved that vector into a new column I named AWDPickup. I think there are no cars that were all wheel drive pickups because there were no pickups in this dataset at all. So we need more information to know anything about pickups and if they are all wheel drive or not.
