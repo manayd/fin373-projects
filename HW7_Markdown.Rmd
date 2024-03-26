@@ -1,0 +1,161 @@
+---
+title: "HW7_Markdown"
+output: pdf_document
+date: "2024-03-20"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Manay Divatia
+# md46245
+# 1
+## a)
+
+```{r a}
+survey_data = read.csv("~/Downloads/finlit15and18.csv")
+library(boot)
+
+num_observations <- nrow(survey_data)
+
+gender_breakdown <- table(survey_data$A3)
+age_breakdown <- summary(survey_data$A3A)
+
+income_breakdown <- table(survey_data$A8)
+```
+There are 4694 observations in this dataset. The gender breakdown is 2539 males
+and 2155 females which is a difference of 384. It does seem roughly even which
+means the data for both will be a good estimate of the population. The age
+breakdown is between 18 and  86 years old. The household income ranged from 
+1-8 with 6 and 7 being the most common. 
+
+## b)
+
+```{r b}
+gender_grouped <- split(survey_data$literacy, survey_data$A3)
+mean_literacy_female <- mean(gender_grouped$"1")
+mean_literacy_male <- mean(gender_grouped$"2")
+observed_difference <- mean_literacy_female - mean_literacy_male
+
+diff_mean <- function(data, indices) {
+  female_mean <- mean(data[indices[1]][data$A3 == "Female"])
+  male_mean <- mean(data[indices[2]][data$A3 == "Male"])
+  return(female_mean - male_mean)
+}
+
+```
+The average literacy difference between females and males is 0.5993832. It seems
+that there is not a significant different from zero so we can't draw any 
+conclusions.
+
+## c)
+
+```{r c}
+
+fit <- lm(literacy ~ factor(A3), data = survey_data)
+summary(fit)
+
+coef_boot <- function(data, indices) {
+  fit <- lm(literacy ~ factor(A3), data = data[indices, ])
+  return(coef(fit)[2])
+}
+
+boot_result_coef <- boot(survey_data, coef_boot, R = 1000)
+sampling_std <- sd(boot_result_coef$t)
+regression_se <- summary(fit)$coefficients[2, "Std. Error"]
+
+```
+The standard deviation of the sampling distribution is 0.043 while the standard
+error for the regression output is 0.042 which is very similar in this case.
+
+## d)
+
+```{r d}
+small_model <- lm(Y ~ literacy + A8, data = survey_data)
+summary(small_model)
+
+large_model <- lm(Y ~ literacy + A5_2015 + A3A + J2 + A3 + A8 + E20 + F2_2 + F2_3 + F2_4 + F2_5 + F2_6, data = survey_data)
+summary(large_model)
+
+literacy_effect_small <- coef(small_model)["literacy"]
+literacy_effect_large <- coef(large_model)["literacy"]
+
+rsquared_small <- summary(small_model)$r.squared
+rsquared_large <- summary(large_model)$r.squared
+```
+I think the small model is good at just focusing on the variables that are 
+important. What we saw with the small model is that the r squared value was
+.0785 while for the large model is was much higher at .37. The large model was
+able to utilize all the data to lower variation in predict and expected value.
+However, there were variables that did not meet the 0.05 requirement so we
+couldn't say that they were significant and removing those would help us lower
+the difference between predicted and expected value even more.
+
+# 2
+## a)
+
+```{r 2a}
+transfer_data = read.csv("~/Downloads/transfer.csv")
+cutoffs <- c(10188, 13584, 16980)
+
+transfer_data$closest_cutoff <- sapply(transfer_data$pop82, function(x) min(abs(x - cutoffs)))
+
+transfer_data$normalized_percent_score <- (transfer_data$closest_cutoff / cutoffs) * 100
+```
+
+## b)
+
+```{r 2b}
+subset_data <- transfer_data[transfer_data$normalized_percent_score <= 3, ]
+
+model_poverty <- lm(poverty91 - poverty80 ~ 1, data = subset_data)
+model_educ <- lm(educ91 - educ80 ~ 1, data = subset_data)
+
+summary(model_poverty)
+summary(model_educ)
+```
+For the average causal effect of government transfer on poverty, I used a linear
+model to do this. I found that the median was -0.00798 and the residual standard
+error was 0.085. Because the median in difference in poverty was so close to
+zero and the first and third quartile contained zero, it seems like we can't
+make any claims based on this data. I did the same thing for the literacy and
+educational attainment variables. For both, I found there to be a similar case
+with the median in difference in educational attainment to be 0.016 with an
+estimated standard eror of 2.66.
+
+## c)
+
+```{r 2c}
+plot(subset_data$pop82, subset_data$educ91 - subset_data$educ80, xlab = "Population", ylab = "Change in Literacy Rate (1991 - 1980)", main = "Change in Literacy Rate vs. Population")
+abline(model_poverty, col = "blue")
+legend("topleft", legend = c("Fitted Regression Line", "Population Threshold"), col = c("blue", "red"), lty = 1:2)
+
+plot(subset_data$pop82, subset_data$educ91 - subset_data$educ80, xlab = "Population", ylab = "Change in Educational Attainment Rate (1991 - 1980)", main = "Change in Educational Attainment Rate vs. Population")
+abline(model_educ, col = "blue")
+legend("topleft", legend = c("Fitted Regression Line"), col = c("blue"), lty = 1:2)
+```
+The plot backs up the data because we can see about half the points above
+the blue line and half below for each cutoff which suggests that there wasn't a
+significant difference for both the poverty model and the educational
+attainment model.
+
+## d)
+
+```{r 2d}
+subset_data$above_threshold <- ifelse(subset_data$pop82 > subset_data$closest_cutoff, 1, 0)
+
+mean_diff_educ <- tapply(subset_data$educ91, subset_data$above_threshold, mean)
+mean_diff_literate <- tapply(subset_data$literate91, subset_data$above_threshold, mean)
+mean_diff_poverty <- tapply(subset_data$poverty91, subset_data$above_threshold, mean)
+```
+The mean difference in educational attainment rate was the highest at 4.54. 
+The mean difference for literacy and poverty were similar where the mean
+difference in literacy was .79 and the mean difference in povery was .61. I
+feel that the estimates are more appropriate in part d because ultimately we 
+are finding the difference in means and that seems more valuable than using a
+linear regression model.
+
+
+
+
