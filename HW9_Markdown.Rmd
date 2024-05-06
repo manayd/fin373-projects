@@ -1,0 +1,80 @@
+---
+title: "HW9_Markdown"
+output: pdf_document
+date: "2024-04-11"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Manay Divatia
+# md46245
+
+```{r a}
+library(dplyr)
+library(ggplot2)
+library(tidyr)
+library(cluster)  
+social = read.csv("~/Downloads/social_marketing.csv")
+summary(social)
+```
+From the summary, we can get some key metrics. What was most important to me
+was seeing if there were any null values. Based on this we know that there
+are not any which is good. 
+
+```{r b}
+interest_distribution <- colSums(select(social, -X))
+print(interest_distribution)
+```
+From this information, we are able to see how often each category appears. From
+this, we can see that chatter, health_nutrition, cooking, photo_sharing,
+college_uni, travel, and sports_fandom, and personal_fitness. Immediately, we
+can see how some of these go together. For example, personal fitness, health
+nutrition, and cooking are all similar topics. Additionally travel and photo
+sharing could also go together.
+
+```{r c}
+social = select(social, -X)
+set.seed(123)
+k <- 5 
+kmeans_model <- kmeans(social, centers = k)
+
+social_clusters <- social %>%
+  mutate(cluster = kmeans_model$cluster)
+
+cluster_summary <- social_clusters %>%
+  group_by(cluster) %>%
+  summarize_all(mean)
+
+print(cluster_summary)
+```
+
+
+
+```{r d}
+cluster_profiles <- cluster_summary %>%
+  gather(key = "interest", value = "mean_count", -cluster)
+
+ggplot(cluster_profiles, aes(x = interest, y = mean_count, fill = factor(cluster))) +
+  geom_bar(stat = "identity", position = "dodge") +
+  labs(title = "Cluster Profiles",
+       x = "Interest",
+       y = "Mean Post Count") +
+  theme_minimal()
+```
+
+
+This graph shows the mean post counts for each category based on the 5 
+clusters. We actually get good information from this. To start, we can see that
+the largest blue line in the middle is in cluster 4 and is the health_nutrition
+category. What we can alos see from this is that, unsurprisingly, the cooking
+and personal_fitness categories also have high mean post counts for this
+clusters which makes sense. We see a similar idea in cluster 5 which is
+interesting. Cluster 5 has 2 categories with large mean post counts which are
+college_uni and online_gaming. This also makes sense since a lot of college
+students do play video games and are likely to tweet about it. 
+
+Ultimately, by clustering and visualizing the data, we see some interesting
+trends in the data that we couldn't have seem if we just looked at the numbers.
+

@@ -1,0 +1,56 @@
+---
+title: "HW10_Markdown"
+output:
+  pdf_document: default
+  html_document: default
+date: "2024-04-18"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## a
+
+My partner is Heinrick Gonzalez. Our research question is "How do different 
+factors affect tourism?"
+
+## b
+
+Heinrick is the only other group member for this project. The grade I would
+give him is an A because he has been really responsive and helpful with
+collecting data, analysis, and overall research.
+
+## c
+
+I looked from other papers on google scholar and they said that transportation,
+price of hotels and commodities, education, hospital facilities and languages
+can all affect tourism.
+
+## d
+
+We found 3 datasets. One had all the general information about countries like
+the gdp, population, land size, etc. The second dataset had information
+relating to happiness so it measured social support, life expectency, freedom,
+etc. The third dataset provided the tourism information about how many people
+come into a country in a given year.
+## e
+
+```{r e}
+combined = read.csv("~/Downloads/combined.csv")
+dim(combined)
+summary(combined)
+```
+
+There are 50 total variables and 145 observations. Each observation representats
+a different country. Some countries were ommitted because the tourism data was 
+not collected for them. 19 of the variables are doubles and the remainder are
+characters. However, some that are characters should be integers or doubles
+which we will have to change in the future.
+
+## f
+
+One method we plan on using is prediction, specifically linear regressions. We
+are doing this just to see if we can find high correlations among certain
+variables. We will also plan on doing unsupervised learning to see if there
+are clusters we can identify.
